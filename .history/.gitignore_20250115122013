@@ -1,0 +1,6 @@
+# Conda environment
+.conda
+.DS_Store
+pointcloud_env/
+*.pyc
+__pycache__/
