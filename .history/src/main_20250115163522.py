@@ -4,14 +4,12 @@ import numpy as np
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QFileDialog, QMessageBox, QAction
 )
+from vedo import Plotter, Points
 from PyQt5 import Qt
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import pathlib
 import Neurosetta as nr
 import vedo as vd
-
-import warnings
-warnings.filterwarnings("ignore")
 
 class MainWindow(QMainWindow):
     def __init__(self, parent = None):
@@ -22,7 +20,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.frame)
         self.vtkWidget = QVTKRenderWindowInteractor(self.frame)
         # Vedo Plotter
-        self.plt = vd.Plotter(qt_widget=self.vtkWidget, bg="white")
+        self.plt = Plotter(qt_widget=self.vtkWidget, bg="white")
+        # self.setCentralWidget(self.plotter.interactor)
 
         # Initialize menu bar
         self.init_menu_bar()
@@ -34,15 +33,10 @@ class MainWindow(QMainWindow):
         # File menu
         file_menu = menu_bar.addMenu("File")
 
-        # Read File Action
-        read_action = QAction("Read File", self)
-        read_action.triggered.connect(self.read_file)
-        file_menu.addAction(read_action)
-
-        # Add file action
-        # add_action = QAction("Add File", self)
-        # add_action.triggered.connect(self.add_file)
-        # file_menu.addAction(add_action)
+        # Read CSV Action
+        read_csv_action = QAction("Read File", self)
+        read_csv_action.triggered.connect(self.read_file)
+        file_menu.addAction(read_csv_action)
 
         # Exit Action
         exit_action = QAction("Exit", self)
@@ -54,12 +48,13 @@ class MainWindow(QMainWindow):
 
     def read_file(self):
         # Open file dialog to select CSV file
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv);; NR File (*.nr);; SWC Files (*.swc);; All Files (*)")
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv);; NR File (*.nr);; SWC Files (*.swc);;All Files (*)")
         if file_name:
             # print(file_name)
             try:
                 # get file type
-                file_type = pathlib.Path(file_name).suffixes[0]
+                file_type = pathlib.Path(file_name)
+                
                 # if this is a csv
                 if file_type == '.csv':
                     # Read CSV file
@@ -86,7 +81,7 @@ class MainWindow(QMainWindow):
 
     def render_point_cloud(self, points):
         # Create a Vedo Points object
-        point_cloud = vd.Points(points, r=5, c="cyan")
+        point_cloud = Points(points, r=5, c="cyan")
         self.layout.addWidget(self.vtkWidget)
 
         # Clear the existing visualization and add the new point cloud
@@ -98,16 +93,7 @@ class MainWindow(QMainWindow):
     def render_nr(self,n):
         lns = nr.plotting._vd_tree_lines(n, c = 'r')
         soma = vd.Point(nr.g_vert_coords(n,nr.g_root_ind(n))[0], c = 'r')
-        neuron = vd.Assembly([lns, soma])
-
-        self.layout.addWidget(self.vtkWidget)
-
-        # Clear the existing visualization and add the new point cloud
-        self.plt.clear()
-        self.plt.add(neuron)
-        self.plt.show(resetcam=True)
-        self.vtkWidget.update()
-
+        neuron 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

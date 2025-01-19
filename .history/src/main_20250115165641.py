@@ -40,9 +40,9 @@ class MainWindow(QMainWindow):
         file_menu.addAction(read_action)
 
         # Add file action
-        # add_action = QAction("Add File", self)
-        # add_action.triggered.connect(self.add_file)
-        # file_menu.addAction(add_action)
+        add_action = QAction("Add File", self)
+        add_action.triggered.connect(self.add_file)
+        file_menu.addAction(add_action)
 
         # Exit Action
         exit_action = QAction("Exit", self)

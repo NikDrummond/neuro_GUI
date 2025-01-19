@@ -1,0 +1,20 @@
+name: neuro_GUI
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - setuptools
+  - graph-tool
+  - pyqt=5
+  - vtk
+  - gudhi
+  - pykdtree
+  - vedo
+  - trimesh
+  - numpy
+  - pandas
+  - scipy  
+  - hdbscan
+  - tqdm
+  - fastcluster
+  - pyinstaller

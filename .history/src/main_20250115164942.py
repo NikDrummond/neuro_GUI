@@ -10,9 +10,6 @@ import pathlib
 import Neurosetta as nr
 import vedo as vd
 
-import warnings
-warnings.filterwarnings("ignore")
-
 class MainWindow(QMainWindow):
     def __init__(self, parent = None):
         Qt.QMainWindow.__init__(self, parent)
@@ -34,15 +31,10 @@ class MainWindow(QMainWindow):
         # File menu
         file_menu = menu_bar.addMenu("File")
 
-        # Read File Action
-        read_action = QAction("Read File", self)
-        read_action.triggered.connect(self.read_file)
-        file_menu.addAction(read_action)
-
-        # Add file action
-        # add_action = QAction("Add File", self)
-        # add_action.triggered.connect(self.add_file)
-        # file_menu.addAction(add_action)
+        # Read CSV Action
+        read_csv_action = QAction("Read File", self)
+        read_csv_action.triggered.connect(self.read_file)
+        file_menu.addAction(read_csv_action)
 
         # Exit Action
         exit_action = QAction("Exit", self)
