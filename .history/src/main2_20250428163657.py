@@ -278,7 +278,7 @@ class MainWindow(QMainWindow):
         if not self.current_object:
             QMessageBox.warning(self, 'Warning','Nothing to save.'); return
         sp, _ = QFileDialog.getSaveFileName(self,'Save As','','Neurosetta (*.nr)')
-        if sp: nr.save(self.current_neuron, sp)
+        if sp: nr.save(self.current_object, sp)
 
     def render_point_cloud(self, pts):
         self._display(vd.Points(pts, r=5, c='cyan'))
@@ -431,10 +431,8 @@ class MainWindow(QMainWindow):
         idx = get_mask_node_ind(self.current_neuron, self.pnt_mask)[0]
         nr.g_subtree_mask(self.current_neuron, idx)
         logging.info(f"Masking downstream from node {idx}")
-        # toggle off select points
-        self.select_checkbox.setChecked(False)
-        # show subtree
-        self.show_subtree()
+        # … downstream logic …
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

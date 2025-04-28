@@ -278,7 +278,7 @@ class MainWindow(QMainWindow):
         if not self.current_object:
             QMessageBox.warning(self, 'Warning','Nothing to save.'); return
         sp, _ = QFileDialog.getSaveFileName(self,'Save As','','Neurosetta (*.nr)')
-        if sp: nr.save(self.current_neuron, sp)
+        if sp: nr.save(self.current_object, sp)
 
     def render_point_cloud(self, pts):
         self._display(vd.Points(pts, r=5, c='cyan'))
@@ -336,29 +336,9 @@ class MainWindow(QMainWindow):
             self.soma.c(col.name())
             self.plotter.render()
 
-    # def show_subtree(self):
-    #     ln = nr.plotting._vd_subtree_lns(self.current_neuron)
-    #     self._display(vd.Assembly([ln,self.soma]))
-    #     # self.plotter.render()
     def show_subtree(self):
-        """Display only the subtree under the current neuron root."""
-        if not self.current_neuron:
-            return
-
-        # Call the Neurosetta helper
-        res = nr.plotting._vd_subtree_lns(self.current_neuron)
-
-        # Normalize to a list of actors
-        if isinstance(res, (tuple, list)):
-            actors = list(res)
-        else:
-            actors = [res]
-
-        # Always include the soma marker as well
-        actors.append(self.soma)
-
-        # Display them
-        self._display(vd.Assembly(actors))
+        ln = nr.plotting._vd_subtree_lns(self.current_neuron)
+        self._display(vd.Assembly([ln,self.soma]))
 
 
     # — Point Selection ——————————————————————————————————
@@ -429,12 +409,9 @@ class MainWindow(QMainWindow):
 
     def mask_downstream(self):
         idx = get_mask_node_ind(self.current_neuron, self.pnt_mask)[0]
-        nr.g_subtree_mask(self.current_neuron, idx)
+        nr.g_subtree_mask()
         logging.info(f"Masking downstream from node {idx}")
-        # toggle off select points
-        self.select_checkbox.setChecked(False)
-        # show subtree
-        self.show_subtree()
+        # … downstream logic …
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
