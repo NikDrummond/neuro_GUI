@@ -61,11 +61,6 @@ class MainWindow(QMainWindow):
         self.current_object = None
         self.current_neuron = None
         self.vertex_coords = None
-        self.pnt_neuron_indices = None
-        # self.reroot_action_btn = None
-        # self.define_subtree_btn = None
-        # self.soma = None
-
 
         # selection state
         self.pnt_coords = None
@@ -259,9 +254,6 @@ class MainWindow(QMainWindow):
         self.next_btn.move(w-nb.width()-10, h-nb.height()-10)
         if hasattr(self, 'reroot_action_btn') and self.reroot_action_btn.isVisible():
             self._position_reroot_btn()  
-        if hasattr(self, 'define_subtree_btn') and self.define_subtree_btn.isVisible():
-            self._position_define_subtree_btn()
-
 
 
 
@@ -326,12 +318,8 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, 'Warning', 'Nothing to save.')
             return
         current_file = self.files[self.current_index]
-        directory = os.path.dirname(current_file)
-        if not directory.endswith('/'):
-            directory += '/'
-        logging.info(f"Saving in directory: {directory}")
         try:
-            nr.save(self.current_neuron, directory)
+            nr.save(self.current_neuron, current_file)
             logging.info(f"Saved: {current_file}")
         except Exception as e:
             QMessageBox.critical(self, 'Error', f'Failed to save: {e}')
@@ -507,13 +495,14 @@ class MainWindow(QMainWindow):
             self.pnt_mask[i] = not self.pnt_mask[i]
             self._update_point_overlays()
             self._update_reroot_button_state()
-            self._update_define_subtree_button_state()
 
 
     def mask_downstream(self):
         idx = get_mask_node_ind(self.current_neuron, self.pnt_mask)[0]
         nr.g_subtree_mask(self.current_neuron, idx)
         logging.info(f"Masking downstream from node {idx}")
+        # toggle off select points
+        self.select_checkbox.setChecked(False)
         # show subtree
         self.show_subtree()
 
@@ -541,17 +530,6 @@ class MainWindow(QMainWindow):
 
         logging.info(f"Neuron rerooted to node {idx}")
 
-    def define_subtree(self):
-        self.mask_downstream()
-        # Remove define subtree button
-        if hasattr(self, 'define_subtree_btn'):
-            self.define_subtree_btn.hide()
-            self.define_subtree_btn.deleteLater()
-            del self.define_subtree_btn
-
-        # Exit select points mode
-        self.toggle_select_points(False)
-
     def subtree_from_point(self):
         # Activate select points view
         self.toggle_select_points(True)
@@ -567,21 +545,16 @@ class MainWindow(QMainWindow):
         self.define_subtree_btn.show()
         self._update_define_subtree_button_state()
 
-    def _position_define_subtree_btn(self):
-        w = self.vtkWidget.width()
-        h = self.vtkWidget.height()
-        pb = self.prev_btn.sizeHint()
-        nb = self.next_btn.sizeHint()
-        sb = self.define_subtree_btn.sizeHint()
-        # Center between the nav arrows
-        x = (w - sb.width()) // 2
-        y = h - sb.height() - 10
-        self.define_subtree_btn.move(x, y)
-
-    def _update_define_subtree_button_state(self):
-        if hasattr(self, 'define_subtree_btn'):
-            ok = (self.pnt_coords is not None and np.sum(self.pnt_mask) == 1)
-            self.define_subtree_btn.setEnabled(ok)
+def _position_define_subtree_btn(self):
+    w = self.vtkWidget.width()
+    h = self.vtkWidget.height()
+    pb = self.prev_btn.sizeHint()
+    nb = self.next_btn.sizeHint()
+    sb = self.define_subtree_btn.sizeHint()
+    # Center between the nav arrows
+    x = (w - sb.width()) // 2
+    y = h - sb.height() - 10
+    self.define_subtree_btn.move(x, y)
 
 
 

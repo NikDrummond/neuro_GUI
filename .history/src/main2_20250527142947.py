@@ -61,11 +61,6 @@ class MainWindow(QMainWindow):
         self.current_object = None
         self.current_neuron = None
         self.vertex_coords = None
-        self.pnt_neuron_indices = None
-        # self.reroot_action_btn = None
-        # self.define_subtree_btn = None
-        # self.soma = None
-
 
         # selection state
         self.pnt_coords = None
@@ -321,20 +316,8 @@ class MainWindow(QMainWindow):
         sp, _ = QFileDialog.getSaveFileName(self,'Save As','','Neurosetta (*.nr)')
         if sp: nr.save(self.current_neuron, sp)
 
-    def save_current_file(self):
-        if not self.current_object or not self.files:
-            QMessageBox.warning(self, 'Warning', 'Nothing to save.')
-            return
-        current_file = self.files[self.current_index]
-        directory = os.path.dirname(current_file)
-        if not directory.endswith('/'):
-            directory += '/'
-        logging.info(f"Saving in directory: {directory}")
-        try:
-            nr.save(self.current_neuron, directory)
-            logging.info(f"Saved: {current_file}")
-        except Exception as e:
-            QMessageBox.critical(self, 'Error', f'Failed to save: {e}')
+
+
 
     def render_point_cloud(self, pts):
         self._display(vd.Points(pts, r=5, c='cyan'))

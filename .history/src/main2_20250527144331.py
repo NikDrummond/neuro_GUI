@@ -62,9 +62,9 @@ class MainWindow(QMainWindow):
         self.current_neuron = None
         self.vertex_coords = None
         self.pnt_neuron_indices = None
-        # self.reroot_action_btn = None
-        # self.define_subtree_btn = None
-        # self.soma = None
+        self.reroot_action_btn = None
+        self.define_subtree_btn = None
+        self.soma = None
 
 
         # selection state

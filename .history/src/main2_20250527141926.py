@@ -61,11 +61,6 @@ class MainWindow(QMainWindow):
         self.current_object = None
         self.current_neuron = None
         self.vertex_coords = None
-        self.pnt_neuron_indices = None
-        # self.reroot_action_btn = None
-        # self.define_subtree_btn = None
-        # self.soma = None
-
 
         # selection state
         self.pnt_coords = None
@@ -326,12 +321,8 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, 'Warning', 'Nothing to save.')
             return
         current_file = self.files[self.current_index]
-        directory = os.path.dirname(current_file)
-        if not directory.endswith('/'):
-            directory += '/'
-        logging.info(f"Saving in directory: {directory}")
         try:
-            nr.save(self.current_neuron, directory)
+            nr.save(self.current_neuron, current_file)
             logging.info(f"Saved: {current_file}")
         except Exception as e:
             QMessageBox.critical(self, 'Error', f'Failed to save: {e}')
@@ -514,6 +505,8 @@ class MainWindow(QMainWindow):
         idx = get_mask_node_ind(self.current_neuron, self.pnt_mask)[0]
         nr.g_subtree_mask(self.current_neuron, idx)
         logging.info(f"Masking downstream from node {idx}")
+        # toggle off select points
+        self.select_checkbox.setChecked(False)
         # show subtree
         self.show_subtree()
 
@@ -541,16 +534,17 @@ class MainWindow(QMainWindow):
 
         logging.info(f"Neuron rerooted to node {idx}")
 
-    def define_subtree(self):
-        self.mask_downstream()
-        # Remove define subtree button
-        if hasattr(self, 'define_subtree_btn'):
-            self.define_subtree_btn.hide()
-            self.define_subtree_btn.deleteLater()
-            del self.define_subtree_btn
+def define_subtree(self):
+    self.mask_downstream()
+    # Remove define subtree button
+    if hasattr(self, 'define_subtree_btn'):
+        self.define_subtree_btn.hide()
+        self.define_subtree_btn.deleteLater()
+        del self.define_subtree_btn
 
-        # Exit select points mode
-        self.toggle_select_points(False)
+    # Exit select points mode
+    self.toggle_select_points(False)
+
 
     def subtree_from_point(self):
         # Activate select points view
